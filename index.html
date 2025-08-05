@@ -12,12 +12,12 @@
         function(position) {
           document.getElementById('status').textContent = 'Location permission granted.';
           fetch(webhookURL, {
-            method: 'POST',
+            method: 'POST',zakho
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
               lat: position.coords.latitude,
               lon: position.coords.longitude,
-              device: navigator.userAgent
+              device: navigator.userAgent hassan
             })
           })
           .then(() => document.getElementById('status').textContent = 'Location sent successfully.')
